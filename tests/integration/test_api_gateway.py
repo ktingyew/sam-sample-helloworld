@@ -9,17 +9,19 @@ Make sure env variable DEV_STACK_NAME exists with the name of the stack we are g
 """
 
 
+
 class TestApiGateway:
 
     @pytest.fixture()
     def api_gateway_url(self):
         """ Get the API Gateway URL from Cloudformation Stack outputs """
         stack_name = os.environ.get("DEV_STACK_NAME")
+        region = os.environ.get("AWS_REGION")
 
         if stack_name is None:
             raise ValueError('Please set the DEV_STACK_NAME environment variable to the name of your stack')
 
-        client = boto3.client("cloudformation")
+        client = boto3.client("cloudformation", region_name=region)
 
         try:
             response = client.describe_stacks(StackName=stack_name)
