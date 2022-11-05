@@ -33,7 +33,7 @@ env:
   PROD_REGION: ap-southeast-1
 
 jobs:
-  test:
+  unit-test:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
@@ -84,7 +84,7 @@ jobs:
     # this stage is triggered only for feature branches (feature*),
     # which will build the stack and deploy to a stack named with branch name.
     if: startsWith(github.ref, 'refs/heads/feature')
-    needs: [test]
+    needs: [unit-test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -115,7 +115,7 @@ jobs:
 
   build-and-package:
     if: github.ref == 'refs/heads/main'
-    needs: [test]
+    needs: [unit-test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -211,8 +211,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: |
-          # trigger the integration tests here
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tests/requirements.txt
+      - name: Test with pytest
+        run: |
+          pip install pytest
+          python -m pytest tests/integration
+
 
   deploy-prod:
     if: github.ref == 'refs/heads/main'
