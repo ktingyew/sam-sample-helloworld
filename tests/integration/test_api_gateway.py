@@ -9,7 +9,6 @@ Make sure env variable DEV_STACK_NAME exists with the name of the stack we are g
 """
 
 
-
 class TestApiGateway:
 
     @pytest.fixture()
@@ -18,11 +17,16 @@ class TestApiGateway:
         stack_name = os.environ.get("DEV_STACK_NAME")
         region = os.environ.get("AWS_REGION")
         cloudformation_role_arn = os.environ.get("DEV_CLOUDFORMATION_EXECUTION_ROLE")
+        cred_profile = os.environ.get("AWS_CREDENTIALS_PROFILE")
 
         if stack_name is None:
             raise ValueError('Please set the DEV_STACK_NAME environment variable to the name of your stack')
 
-        sts_client = boto3.client('sts')
+        if cred_profile is None:
+            sts_client = boto3.client('sts')
+        else:
+            session = boto3.session.Session(profile_name=cred_profile)
+            sts_client = session.client('sts')
 
         # Call the assume_role method of the STSConnection object and pass the role
         # ARN and a role session name.
