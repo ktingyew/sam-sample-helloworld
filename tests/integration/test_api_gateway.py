@@ -17,11 +17,31 @@ class TestApiGateway:
         """ Get the API Gateway URL from Cloudformation Stack outputs """
         stack_name = os.environ.get("DEV_STACK_NAME")
         region = os.environ.get("AWS_REGION")
+        cloudformation_role_arn = os.environ.get("DEV_CLOUDFORMATION_EXECUTION_ROLE")
 
         if stack_name is None:
             raise ValueError('Please set the DEV_STACK_NAME environment variable to the name of your stack')
 
-        client = boto3.client("cloudformation", region_name=region)
+        sts_client = boto3.client('sts')
+
+        # Call the assume_role method of the STSConnection object and pass the role
+        # ARN and a role session name.
+        assumed_role_object=sts_client.assume_role(
+            RoleArn=cloudformation_role_arn,
+            RoleSessionName="AssumeRoleSession1"
+        )
+
+        # From the response that contains the assumed role, get the temporary 
+        # credentials that can be used to make subsequent API calls
+        credentials=assumed_role_object['Credentials']
+
+        client = boto3.client(
+            "cloudformation", 
+            region_name=region,
+            aws_access_key_id=credentials['AccessKeyId'],
+            aws_secret_access_key=credentials['SecretAccessKey'],
+            aws_session_token=credentials['SessionToken']
+        )
 
         try:
             response = client.describe_stacks(StackName=stack_name)
