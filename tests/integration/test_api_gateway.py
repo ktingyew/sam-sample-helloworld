@@ -16,7 +16,7 @@ class TestApiGateway:
         """ Get the API Gateway URL from Cloudformation Stack outputs """
         stack_name = os.environ.get("DEV_STACK_NAME")
         region = os.environ.get("AWS_REGION")
-        cloudformation_role_arn = os.environ.get("DEV_CLOUDFORMATION_EXECUTION_ROLE")
+        cloudformation_role_arn = os.environ.get("DEV_PIPELINE_EXECUTION_ROLE")
         cred_profile = os.environ.get("AWS_CREDENTIALS_PROFILE")
 
         if stack_name is None:
