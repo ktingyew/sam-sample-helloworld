@@ -14,6 +14,8 @@ env:
   PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   SAM_TEMPLATE: template.yaml
   AWS_REGION: ap-southeast-1
+  SAM_CLI_TELEMETRY: 0
+
   DEV_STACK_NAME: wello-dev
   DEV_PIPELINE_EXECUTION_ROLE: arn:aws:iam::866503935015:role/GitHubActionsRole
   DEV_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::866503935015:role/CloudFormationCustomRole
@@ -236,8 +238,9 @@ jobs:
         run: |
           echo API_URL=$( \
             aws cloudformation describe-stacks \
-              --stack-name wello-dev \
+              --stack-name ${DEV_STACK_NAME} \
               --query "Stacks[0].Outputs[?OutputKey=='HelloWorldApi'].OutputValue | [0]" \
+              --output text \
           ) >> $GITHUB_ENV
 
       - name: Test with pytest
