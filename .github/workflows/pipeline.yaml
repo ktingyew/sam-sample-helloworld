@@ -240,14 +240,11 @@ jobs:
               --query "Stacks[0].Outputs[?OutputKey=='HelloWorldApi'].OutputValue | [0]" \
           ) >> $GITHUB_ENV
 
-      - name: Echo API_URL
+      - name: Test with pytest
         run: |
+          pip install pytest
           echo $API_URL
-
-      # - name: Test with pytest
-      #   run: |
-      #     pip install pytest
-      #     python -m pytest tests/integration
+          python -m pytest tests/integration
 
 
   deploy-prod:
