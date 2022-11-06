@@ -234,11 +234,11 @@ jobs:
 
       - name: Get API url and export into env var
         run: |
-          export API_URL=$( \
+          echo API_URL=$( \
             aws cloudformation describe-stacks \
               --stack-name wello-dev \
               --query "Stacks[0].Outputs[?OutputKey=='HelloWorldApi'].OutputValue | [0]" \
-          )
+          ) >> ./tmp/hello.txt
 
       - name: Echo API_URL
         run: |
