@@ -32,6 +32,9 @@ coverage.xml
 *.cover
 .hypothesis/
 
+# Tmp files
+tmp/
+
 # Environments
 .env
 .venv

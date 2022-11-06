@@ -25,6 +25,9 @@ sam pipeline bootstrap \
   --region ap-southeast-1
 ```
 
+```With JMESPath Query
+aws cloudformation describe-stacks --stack-name wello-dev --query "Stacks[0].Outputs[?OutputKey == 'HelloWorldApi']"
+```
 
 - hello_world - Code for the application's Lambda function.
 - events - Invocation events that you can use to invoke the function.
